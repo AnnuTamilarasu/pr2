@@ -7,7 +7,7 @@ import { java } from "@codemirror/lang-java";
 import { css } from "@codemirror/lang-css";
 import { socket } from "./Socket";
 
-interface CodeEditorProps {
+export interface CodeEditorProps {
   initialCode?: string;
 }
 
