@@ -2,21 +2,17 @@ import React, { useState } from "react";
 import axios from "axios";
 
 interface UploadFileProps {
-  onFileLoaded: (content: string) => void; // Pass file content to parent
+  onFileLoaded: (content: string) => void;
 }
 
 const UploadFile: React.FC<UploadFileProps> = ({ onFileLoaded }) => {
   const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
 
-  // Handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
+    if (e.target.files && e.target.files[0]) setFile(e.target.files[0]);
   };
 
-  // Handle file upload
   const handleUpload = async () => {
     if (!file) return alert("Please select a file first!");
     setUploading(true);
@@ -29,10 +25,10 @@ const UploadFile: React.FC<UploadFileProps> = ({ onFileLoaded }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("📄 Server response:", res.data.content); // Debug log
-      onFileLoaded(res.data.content); // ✅ Pass content to App
+      onFileLoaded(res.data.content);
+      setFile(null); // Reset input
     } catch (err) {
-      console.error("❌ Upload error:", err);
+      console.error("Upload error:", err);
       alert("File upload failed.");
     } finally {
       setUploading(false);
@@ -40,7 +36,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onFileLoaded }) => {
   };
 
   return (
-    <div className="mb-3 d-flex gap-3">
+    <div className="d-flex gap-2 flex-wrap ">
       <input
         type="file"
         className="form-control w-auto"
@@ -48,7 +44,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onFileLoaded }) => {
         accept=".txt,.js,.ts,.jsx,.tsx,.json,.py,.java,.html,.css"
       />
       <button
-        className="btn btn-primary"
+        className="btn btn-outline-dark"
         onClick={handleUpload}
         disabled={uploading}
       >

@@ -1,22 +1,32 @@
+// App.tsx
 import React, { useState } from "react";
-import CodeEditor from "./components/Code";
-import UploadFile from "./components/upload";
+import "bootstrap/dist/css/bootstrap.css";
 
-function App() {
+import UploadFile from "./components/UploadFIle";
+import CodeEditor from "./components/CodeEditor";
+
+const App: React.FC = () => {
   const [code, setCode] = useState<string>("");
 
-  // ✅ Make sure setCode is actually called
-  const handleFileLoad = (content: string) => {
-    console.log("📄 File loaded:", content); // Debug log
-    setCode(content);
-  };
-
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-      <UploadFile onFileLoaded={handleFileLoad} />
-      <CodeEditor initialCode={code} />
+    <div className="container my-4 ">
+      {/* Upload Section */}
+      <section className="mb-4">
+        <div className="card shadow-sm p-3 bg-dark text-white">
+          <h5 className="mb-3">Upload a File</h5>
+          <UploadFile onFileLoaded={(content) => setCode(content)} />
+        </div>
+      </section>
+
+      {/* Editor Section */}
+      <section>
+        <div className="card shadow-sm p-3 bg-dark text-white">
+          <h5 className="mb-3">Code Editor</h5>
+          <CodeEditor initialCode={code} />
+        </div>
+      </section>
     </div>
   );
-}
+};
 
 export default App;
