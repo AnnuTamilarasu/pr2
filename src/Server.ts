@@ -12,7 +12,9 @@ app.use(cors());
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
+// --------------------
 // File upload route — reads text directly
+// --------------------
 app.post("/upload", upload.single("picture"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded." });
@@ -29,9 +31,10 @@ app.post("/upload", upload.single("picture"), (req, res) => {
   });
 });
 
+// --------------------
 // Create HTTP server and wrap with socket.io
-import { createServer } from "http";
-const server = createServer(app);
+// --------------------
+const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:3000",
@@ -39,10 +42,13 @@ const io = new Server(server, {
   },
 });
 
+// --------------------
 // Socket.io logic
+// --------------------
 io.on("connection", (socket: Socket) => {
   console.log("🟢 New client connected:", socket.id);
 
+  // Listen for code changes from one client and broadcast to others
   socket.on("codeChange", (newCode: string) => {
     socket.broadcast.emit("codeUpdate", newCode);
   });
@@ -52,7 +58,9 @@ io.on("connection", (socket: Socket) => {
   });
 });
 
+// --------------------
 // Start server
+// --------------------
 const PORT = 4000;
 server.listen(PORT, () =>
   console.log(`✅ Server running on http://localhost:${PORT}`)

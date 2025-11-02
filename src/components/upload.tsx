@@ -1,80 +1,59 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useForm } from "react-hook-form";
 
-interface FormValues {
-  picture: FileList;
+interface UploadFileProps {
+  onFileLoaded: (content: string) => void; // Pass file content to parent
 }
 
-const UploadFile: React.FC = () => {
-  const { register, handleSubmit } = useForm<FormValues>();
+const UploadFile: React.FC<UploadFileProps> = ({ onFileLoaded }) => {
   const [file, setFile] = useState<File | null>(null);
-  const [uploadStatus, setUploadStatus] = useState<string>("");
+  const [uploading, setUploading] = useState(false);
 
-  const onSubmit = (data: FormValues) => {
-    if (data.picture && data.picture.length > 0) {
-      const selectedFile = data.picture[0];
-      setFile(selectedFile);
-      setUploadStatus(`Selected file: ${selectedFile.name}`);
-      console.log("Selected file:", selectedFile.name);
+  // Handle file selection
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
     }
   };
 
+  // Handle file upload
   const handleUpload = async () => {
-    if (!file) {
-      setUploadStatus("Please select a file first!");
-      return;
-    }
-
-    const fd = new FormData();
-    fd.append("picture", file); // ✅ matches backend
+    if (!file) return alert("Please select a file first!");
+    setUploading(true);
 
     try {
-      const response = await axios.post("http://localhost:4000/upload", fd, {
+      const formData = new FormData();
+      formData.append("picture", file);
+
+      const res = await axios.post("http://localhost:4000/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("File uploaded:", response.data);
-      setUploadStatus(`✅ File uploaded! Content:\n${response.data.content}`);
-    } catch (error) {
-      console.error("Upload failed:", error);
-      setUploadStatus("❌ Upload failed. Check console.");
+      console.log("📄 Server response:", res.data.content); // Debug log
+      onFileLoaded(res.data.content); // ✅ Pass content to App
+    } catch (err) {
+      console.error("❌ Upload error:", err);
+      alert("File upload failed.");
+    } finally {
+      setUploading(false);
     }
   };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        gap: "15px",
-      }}
-    >
-      <h1>📁 Upload a File</h1>
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <input type="file" {...register("picture")} />
-        <button type="submit">Select File</button>
-      </form>
-
-      <button onClick={handleUpload} style={{ marginTop: "10px" }}>
-        Upload
+    <div className="mb-3 d-flex gap-3">
+      <input
+        type="file"
+        className="form-control w-auto"
+        onChange={handleFileChange}
+        accept=".txt,.js,.ts,.jsx,.tsx,.json,.py,.java,.html,.css"
+      />
+      <button
+        className="btn btn-primary"
+        onClick={handleUpload}
+        disabled={uploading}
+      >
+        {uploading ? "Uploading..." : "Upload File"}
       </button>
-
-      {uploadStatus && (
-        <pre
-          style={{
-            marginTop: "10px",
-            color: "lightgreen",
-            whiteSpace: "pre-wrap",
-            textAlign: "center",
-          }}
-        >
-          {uploadStatus}
-        </pre>
-      )}
     </div>
   );
 };

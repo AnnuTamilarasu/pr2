@@ -1,25 +1,21 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import React, { useState } from "react";
 import CodeEditor from "./components/Code";
 import UploadFile from "./components/upload";
 
 function App() {
+  const [code, setCode] = useState<string>("");
+
+  // ✅ Make sure setCode is actually called
+  const handleFileLoad = (content: string) => {
+    console.log("📄 File loaded:", content); // Debug log
+    setCode(content);
+  };
+
   return (
-    <BrowserRouter>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
-        <div className="container-fluid">
-          <Link className="navbar-brand" to="/">
-            Home
-          </Link>
-          <Link className="navbar-brand" to="/Code">
-            Code
-          </Link>
-        </div>
-      </nav>
-      <Routes>
-        <Route path="/" element={<UploadFile />} />
-        <Route path="/Code" element={<CodeEditor />} />
-      </Routes>
-    </BrowserRouter>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <UploadFile onFileLoaded={handleFileLoad} />
+      <CodeEditor initialCode={code} />
+    </div>
   );
 }
 
