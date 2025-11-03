@@ -30,10 +30,6 @@ app.post("/upload", upload.single("picture"), (req, res) => {
     content: fileContent,
   });
 });
-
-// --------------------
-// Create HTTP server and wrap with socket.io
-// --------------------
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -42,25 +38,22 @@ const io = new Server(server, {
   },
 });
 
-// --------------------
-// Socket.io logic
-// --------------------
 io.on("connection", (socket: Socket) => {
   console.log("🟢 New client connected:", socket.id);
 
-  // Listen for code changes from one client and broadcast to others
-  socket.on("codeChange", (newCode: string) => {
-    socket.broadcast.emit("codeUpdate", newCode);
+  socket.on("codeUpdate", (fileId:number, tabId:number, newCode:string) => {
+    console.log("🟢 codeUpdate event:", socket.id);
+    socket.broadcast.emit("codeUpdate", {fileId, tabId, newCode});
   });
-
+  socket.on("createFile", (newCode: string) => {
+    console.log("🟢 createFile event:", socket.id);
+    socket.broadcast.emit("fileCreated", newCode);
+  });
   socket.on("disconnect", () => {
     console.log("🔴 Client disconnected:", socket.id);
   });
 });
 
-// --------------------
-// Start server
-// --------------------
 const PORT = 4000;
 server.listen(PORT, () =>
   console.log(`✅ Server running on http://localhost:${PORT}`)

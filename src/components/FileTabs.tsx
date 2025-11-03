@@ -1,79 +1,74 @@
-import React, { useState } from "react";
-import CodeEditor from "./CodeEditor";
+// src/components/FileTabs.tsx
+import React from "react";
+import CodeEditor from "./CodeEditor.tsx";
+import type { ListItem } from "./types.ts";
+import { socket } from "./Socket.ts";
 
-export interface TabItem {
-  id: number;
-  label: string;
-  content: React.ReactNode;
+interface FileTabsProps {
+  files: ListItem[];
+  activeTabId: number | null;
+  setActiveTabId: (id: number) => void;
+  onFileUpdate: (
+    fileId: number,
+    tabId: number,
+    newCode: string,
+    newLanguage?: string
+  ) => void;
 }
 
-interface ListItem {
-  id: number;
-  text: string;
-  tabs: TabItem[];
-}
-
-const FileTabs: React.FC = () => {
-  const [items, setItems] = useState<ListItem[]>([]);
-  const [newItemText, setNewItemText] = useState<string>("");
-  const [activeTabId, setActiveTabId] = useState<number | null>(null);
-
-  const handleAddItem = () => {
-    if (newItemText.trim() !== "") {
-      const newItem: ListItem = {
-        id: Date.now(),
-        text: newItemText.trim(),
-        tabs: [
-          {
-            id: Date.now() + 1,
-            label: newItemText.trim(),
-            content: <CodeEditor initialCode={`// ${newItemText} code`} />,
-          },
-        ],
-      };
-      setItems((prev) => [...prev, newItem]);
-      setActiveTabId(newItem.id); // Make new tab active
-      setNewItemText("");
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNewItemText(e.target.value);
+const FileTabs: React.FC<FileTabsProps> = ({
+  files,
+  activeTabId,
+  setActiveTabId,
+  onFileUpdate,
+}) => {
+  // Emit local changes
+  const handleLocalChange = (
+    fileId: number,
+    tabId: number,
+    newCode: string
+  ) => {
+    socket.emit("codeUpdate", { fileId, tabId, newCode });
+    console.log("FileTabs - codeUpdate, local code change event sent");
   };
 
   return (
     <div>
-      <h1>Files</h1>
-      <input
-        type="text"
-        value={newItemText}
-        onChange={handleChange}
-        placeholder="Enter new item"
-      />
-      <button onClick={handleAddItem}>Add Item</button>
-
-      <ul className="nav nav-tabs mt-3">
-        {items.map((item) => (
-          <li className="nav-item" key={item.id}>
+      <ul className="nav nav-tabs">
+        {files.map((file) => (
+          <li className="nav-item" key={file.id}>
             <a
               href="#"
-              className={`nav-link ${activeTabId === item.id ? "active" : ""}`}
+              className={`nav-link ${activeTabId === file.id ? "active" : ""}`}
               onClick={(e) => {
                 e.preventDefault();
-                setActiveTabId(item.id);
+                setActiveTabId(file.id);
               }}
             >
-              {item.text}
+              {file.text}
             </a>
           </li>
         ))}
       </ul>
 
       <div className="mt-3">
-        {items.map(
-          (item) =>
-            activeTabId === item.id &&
-            item.tabs.map((tab) => <div key={tab.id}>{tab.content}</div>)
+        {files.map(
+          (file) =>
+            activeTabId === file.id &&
+            file.tabs.map((tab) => (
+              <div key={tab.id}>
+                <CodeEditor
+                  code={tab.code}
+                  language={tab.language}
+                  onChange={(code) => handleLocalChange(file.id, tab.id, code)}
+                  onLanguageChange={(newLang) =>
+                    onFileUpdate(file.id, tab.id, tab.code, newLang)
+                  }
+                  fileId={file.id}
+                  tabId={tab.id}
+                />
+              </div>
+            ))
         )}
       </div>
     </div>

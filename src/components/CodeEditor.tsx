@@ -1,37 +1,56 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
 import { html } from "@codemirror/lang-html";
 import { java } from "@codemirror/lang-java";
 import { css } from "@codemirror/lang-css";
-import { socket } from "./Socket";
+import { socket } from "./Socket.ts";
 
 export interface CodeEditorProps {
-  initialCode?: string;
+  fileId: number; // ID of the file
+  tabId: number; // ID of the tab
+  code: string;
+  language: string;
+  onChange: (value: string) => void;
+  onLanguageChange: (lang: string) => void;
 }
 
-const CodeEditor: React.FC<CodeEditorProps> = ({ initialCode }) => {
-  const [code, setCode] = useState<string>(initialCode || "");
-  const [language, setLanguage] = useState<string>("javascript");
-
-  useEffect(() => {
-    if (initialCode !== undefined) setCode(initialCode);
-  }, [initialCode]);
-
+const CodeEditor: React.FC<CodeEditorProps> = ({
+  fileId,
+  tabId,
+  code,
+  language,
+  onChange,
+  onLanguageChange,
+}) => {
   // Receive code updates from server
   useEffect(() => {
-    const handleCodeUpdate = (newCode: string) => setCode(newCode);
-    socket.on("codeUpdate", handleCodeUpdate);
+    const handleCodeUpdate = ({
+      fileId: incomingFileId,
+      tabId: incomingTabId,
+      newCode,
+    }: {
+      fileId: number;
+      tabId: number;
+      newCode: string;
+    }) => {
+      if (incomingFileId === fileId && incomingTabId === tabId) {
+        onChange(newCode);
+      }
+    };
 
+    socket.on("codeUpdate", handleCodeUpdate);
     return () => {
       socket.off("codeUpdate", handleCodeUpdate);
     };
-  }, []);
+  }, [fileId, tabId, onChange]);
 
-  const handleChange = (value: string) => {
-    setCode(value);
-    socket.emit("codeChange", value);
+  // Emit local changes
+  const handleLocalChange = (value: string) => {
+    onChange(value);
+    //socket.emit("codeUpdate", { fileId, tabId, newCode: value });
+    //console.log("codeUpdate, local code change event sent");
   };
 
   const getLanguageExtension = () => {
@@ -66,7 +85,14 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialCode }) => {
         <select
           className="form-select w-auto"
           value={language}
-          onChange={(e) => setLanguage(e.target.value)}
+          onChange={(e) => {
+            onLanguageChange(e.target.value);
+            socket.emit("languageUpdate", {
+              fileId,
+              tabId,
+              newLang: e.target.value,
+            });
+          }}
         >
           <option value="javascript">JavaScript</option>
           <option value="python">Python</option>
@@ -82,7 +108,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({ initialCode }) => {
           height="400px"
           theme="dark"
           extensions={[getLanguageExtension()]}
-          onChange={handleChange}
+          onChange={(value) => handleLocalChange(value)}
           placeholder={getPlaceholder()}
         />
       </div>
