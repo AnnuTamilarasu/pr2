@@ -49,8 +49,8 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   // Emit local changes
   const handleLocalChange = (value: string) => {
     onChange(value);
-    //socket.emit("codeUpdate", { fileId, tabId, newCode: value });
-    //console.log("codeUpdate, local code change event sent");
+    socket.emit("codeUpdate", { fileId, tabId, newCode: value });
+    console.log("codeUpdate, local code change event sent");
   };
 
   const getLanguageExtension = () => {

@@ -2,7 +2,6 @@
 import React from "react";
 import CodeEditor from "./CodeEditor.tsx";
 import type { ListItem } from "./types.ts";
-import { socket } from "./Socket.ts";
 
 interface FileTabsProps {
   files: ListItem[];
