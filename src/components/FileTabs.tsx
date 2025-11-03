@@ -22,16 +22,6 @@ const FileTabs: React.FC<FileTabsProps> = ({
   setActiveTabId,
   onFileUpdate,
 }) => {
-  // Emit local changes
-  const handleLocalChange = (
-    fileId: number,
-    tabId: number,
-    newCode: string
-  ) => {
-    socket.emit("codeUpdate", { fileId, tabId, newCode });
-    console.log("FileTabs - codeUpdate, local code change event sent");
-  };
-
   return (
     <div>
       <ul className="nav nav-tabs">
@@ -60,7 +50,7 @@ const FileTabs: React.FC<FileTabsProps> = ({
                 <CodeEditor
                   code={tab.code}
                   language={tab.language}
-                  onChange={(code) => handleLocalChange(file.id, tab.id, code)}
+                  onChange={(code) => onFileUpdate(file.id, tab.id, code)}
                   onLanguageChange={(newLang) =>
                     onFileUpdate(file.id, tab.id, tab.code, newLang)
                   }

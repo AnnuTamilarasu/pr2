@@ -30,12 +30,15 @@ const App: React.FC = () => {
         file.id === fileId
           ? {
               ...file,
-              tabs: file.tabs.map((tab) => ({
-                ...tab,
-                code: tab.id === tabId ? newCode : tab.code,
-                language:
-                  tab.id === tabId && newLanguage ? newLanguage : tab.language,
-              })),
+              tabs: file.tabs.map((tab) =>
+                tab.id === tabId
+                  ? {
+                      ...tab,
+                      code: newCode,
+                      language: newLanguage ?? tab.language,
+                    }
+                  : tab
+              ),
             }
           : file
       )
@@ -60,7 +63,6 @@ const App: React.FC = () => {
     socket.on("fileCreated", (newFile: ListItem) => {
       console.log("App - fileCreated, received a file name");
       setFiles((prev) => [...prev, newFile]);
-      handleFileUpdate(newFile.id, newFile.id + 1, newFile.text);
     });
 
     socket.on("codeUpdate", (id: number, tabId: number, code: string) => {
@@ -69,7 +71,7 @@ const App: React.FC = () => {
     });
 
     socket.on(
-      "languageUpdated",
+      "languageUpdate",
       (fileId: number, tabId: number, newLang: string) => {
         const tab = files
           .find((f) => f.id === fileId)
@@ -82,10 +84,10 @@ const App: React.FC = () => {
     return () => {
       socket.off("initFiles");
       socket.off("fileCreated");
-      socket.off("codeUpdated");
-      socket.off("languageUpdated");
+      socket.off("codeUpdate");
+      socket.off("languageUpdate");
     };
-  }, [files]);
+  }, []);
 
   return (
     <div className="container my-4">
