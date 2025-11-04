@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { python } from "@codemirror/lang-python";
