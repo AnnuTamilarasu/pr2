@@ -25,32 +25,10 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   onChange,
   onLanguageChange,
 }) => {
-  // Receive code updates from server
-  useEffect(() => {
-    const handleCodeUpdate = ({
-      fileId: incomingFileId,
-      tabId: incomingTabId,
-      newCode,
-    }: {
-      fileId: number;
-      tabId: number;
-      newCode: string;
-    }) => {
-      if (incomingFileId === fileId && incomingTabId === tabId) {
-        onChange(newCode);
-      }
-    };
-
-    socket.on("codeUpdate", handleCodeUpdate);
-    return () => {
-      socket.off("codeUpdate", handleCodeUpdate);
-    };
-  }, [fileId, tabId, onChange]);
-
-  // Emit local changes
+  // Handle code updates from codemirror and send event
   const handleLocalChange = (value: string) => {
     onChange(value);
-    //New code Tamil
+
     const updatedFile: ListItem = {
       id: fileId,
       text: value,

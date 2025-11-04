@@ -14,7 +14,6 @@ const App: React.FC = () => {
   const handleFileCreated = (newFile: ListItem) => {
     setFiles((prev) => [...prev, newFile]);
     setActiveTabId(newFile.id); // make new tab active
-    //socket.emit("createFile", newFile);
   };
 
   // Update code or language in App state
