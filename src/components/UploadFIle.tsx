@@ -60,7 +60,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onFileCreated }) => {
 
       onFileCreated(newFile); // Send file to App state
       socket.emit("createFile", newFile);
-      console.log("File created, sending upload request");
+      console.log("FileTabs - File opened, sending createFile event");
       setFile(null);
       setUploading(false);
     };
@@ -89,7 +89,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onFileCreated }) => {
 
     onFileCreated(newFile);
     socket.emit("createFile", newFile);
-    console.log("File created, notifying");
+    console.log("FileTabs - New File created, sending createFile event");
     setNewFileName("");
   };
 

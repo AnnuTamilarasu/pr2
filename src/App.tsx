@@ -65,9 +65,11 @@ const App: React.FC = () => {
       setFiles((prev) => [...prev, newFile]);
     });
 
-    socket.on("codeUpdate", (id: number, tabId: number, code: string) => {
+    //socket.on("codeUpdate", (id: number, tabId: number, code: string) => {
+    socket.on("codeUpdate", (newFile: ListItem) => {
       console.log("App - codeUpdate, received a file update");
-      handleFileUpdate(id, tabId, code);
+      handleFileUpdate(newFile.id, newFile.id + 1, newFile.text);
+      //handleFileUpdate(newFile.id, newFile.id + 1, newFile.text);
     });
 
     socket.on(

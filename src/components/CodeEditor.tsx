@@ -6,6 +6,7 @@ import { html } from "@codemirror/lang-html";
 import { java } from "@codemirror/lang-java";
 import { css } from "@codemirror/lang-css";
 import { socket } from "./Socket.ts";
+import type { ListItem, TabItem } from "./types.ts";
 
 export interface CodeEditorProps {
   fileId: number; // ID of the file
@@ -49,7 +50,20 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
   // Emit local changes
   const handleLocalChange = (value: string) => {
     onChange(value);
-    socket.emit("codeUpdate", { fileId, tabId, newCode: value });
+    //New code Tamil
+    const updatedFile: ListItem = {
+      id: fileId,
+      text: value,
+      tabs: [
+        {
+          id: fileId + 1,
+          label: "",
+          code: value,
+          language,
+        } as TabItem,
+      ],
+    };
+    socket.emit("codeUpdate", updatedFile);
     console.log("codeUpdate, local code change event sent");
   };
 

@@ -4,6 +4,13 @@ import { Server, Socket } from "socket.io";
 import cors from "cors";
 import multer from "multer";
 
+export interface fileInfo {
+  fileId: number,
+  tabId: number,
+  label: string,
+  text: string
+}
+
 // Create express app
 const app = express();
 app.use(cors());
@@ -41,9 +48,10 @@ const io = new Server(server, {
 io.on("connection", (socket: Socket) => {
   console.log("🟢 New client connected:", socket.id);
 
-  socket.on("codeUpdate", (fileId:number, tabId:number, newCode:string) => {
+  //socket.on("codeUpdate", (fileId:number, tabId:number, newCode:string) => {
+  socket.on("codeUpdate", (newCode:string) => {
     console.log("🟢 codeUpdate event:", socket.id);
-    socket.broadcast.emit("codeUpdate", {fileId, tabId, newCode});
+    socket.broadcast.emit("codeUpdate", newCode);
   });
   socket.on("createFile", (newCode: string) => {
     console.log("🟢 createFile event:", socket.id);
