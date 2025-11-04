@@ -43,13 +43,6 @@ const App: React.FC = () => {
           : file
       )
     );
-
-    // Emit changes to server for real-time updates
-    /* if (newLanguage) {
-      socket.emit("languageChange", fileId, tabId, newLanguage);
-    } else {
-      socket.emit("codeChange", fileId, tabId, newCode);
-    }*/
   };
 
   // Listen to server events for real-time updates
@@ -65,11 +58,9 @@ const App: React.FC = () => {
       setFiles((prev) => [...prev, newFile]);
     });
 
-    //socket.on("codeUpdate", (id: number, tabId: number, code: string) => {
     socket.on("codeUpdate", (newFile: ListItem) => {
       console.log("App - codeUpdate, received a file update");
       handleFileUpdate(newFile.id, newFile.id + 1, newFile.text);
-      //handleFileUpdate(newFile.id, newFile.id + 1, newFile.text);
     });
 
     socket.on(
