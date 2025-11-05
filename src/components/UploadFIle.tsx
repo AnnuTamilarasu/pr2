@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { socket } from "./Socket.ts";
 import type { ListItem, TabItem } from "./types.ts";
+import "bootstrap/dist/css/bootstrap.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 interface UploadFileProps {
   onFileCreated: (newFile: ListItem) => void;
@@ -94,34 +96,72 @@ const UploadFile: React.FC<UploadFileProps> = ({ onFileCreated }) => {
   };
 
   return (
-    <div className="d-flex flex-wrap gap-2 align-items-center">
-      {/* File Upload */}
-      <input
-        type="file"
-        className="form-control w-auto"
-        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-        accept=".txt,.js,.ts,.jsx,.tsx,.py,.html,.css,.java"
-      />
-      <button
-        className="btn btn-outline-dark"
-        onClick={handleUpload}
-        disabled={uploading}
-      >
-        {uploading ? "Uploading..." : "Upload File"}
-      </button>
+    <>
+      <p className="d-inline-flex gap-1 bg-black">
+        <a
+          className="btn btn-success"
+          data-bs-toggle="collapse"
+          href="#collapseUpload"
+          role="button"
+          aria-expanded="false"
+          aria-controls="collapseUpload"
+        >
+          Upload File
+        </a>
+        <button
+          className="btn btn-success"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#collapseNewFile"
+          aria-expanded="false"
+          aria-controls="collapseNewFile"
+        >
+          New File
+        </button>
+      </p>
 
-      {/* Empty File Creation */}
-      <input
-        type="text"
-        className="form-control w-auto"
-        placeholder="New file name"
-        value={newFileName}
-        onChange={(e) => setNewFileName(e.target.value)}
-      />
-      <button className="btn btn-outline-success" onClick={handleCreateEmpty}>
-        New File
-      </button>
-    </div>
+      {/* Upload Section */}
+      <div className="collapse" id="collapseUpload">
+        <div className="card card-body bg-dark border-white">
+          <input
+            type="file"
+            className="form-control me-2 bg-dark border-white text-white"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            accept=".txt,.js,.ts,.jsx,.tsx,.py,.html,.css,.java"
+          />
+          <button
+            className="btn btn-success mt-2"
+            onClick={handleUpload}
+            disabled={uploading}
+          >
+            {uploading ? "Uploading..." : "Open"}
+          </button>
+        </div>
+      </div>
+
+      {/* Create Empty File Section */}
+      <div className="collapse mt-2" id="collapseNewFile">
+        <div className="card card-body bg-dark border-white">
+          <div className="d-flex flex-wrap gap-2 align-items-center">
+            <input
+              type="text"
+              className="form-control me-2 border-white text-white"
+              style={{ width: "65%" }}
+              placeholder="New file name"
+              value={newFileName}
+              onChange={(e) => setNewFileName(e.target.value)}
+            />
+            <button
+              className="btn btn-success"
+              style={{ width: "32%" }}
+              onClick={handleCreateEmpty}
+            >
+              Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
 

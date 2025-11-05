@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.css";
-
+import "./App.css";
 import UploadFile from "./components/UploadFile.tsx";
 import FileTabs from "./components/FileTabs.tsx";
 import { socket } from "./components/Socket.ts";
@@ -82,15 +82,17 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="container my-4">
+    <div
+      className="container-fluid bg-dark text-white"
+      style={{ width: "100%" }}
+    >
       <section className="mb-4">
-        <div className="card shadow-sm p-3 bg-dark text-white">
-          <h5 className="mb-3">Upload / Create File</h5>
+        <div className="card shadow-sm p-3 bg-black text-white">
           <UploadFile onFileCreated={handleFileCreated} />
         </div>
       </section>
 
-      <section>
+      <section style={{ height: "100%" }}>
         <div className="card shadow-sm p-3 bg-dark text-white">
           <FileTabs
             files={files}

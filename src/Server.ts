@@ -19,9 +19,7 @@ app.use(cors());
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// --------------------
 // File upload route — reads text directly
-// --------------------
 app.post("/upload", upload.single("picture"), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded." });

@@ -97,7 +97,7 @@ const CodeEditor: React.FC<CodeEditorProps> = ({
       <div className="border rounded p-2 shadow-sm bg-dark">
         <CodeMirror
           value={code}
-          height="400px"
+          height="70vh"
           theme="dark"
           extensions={[getLanguageExtension()]}
           onChange={(value) => handleLocalChange(value)}
