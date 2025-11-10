@@ -145,7 +145,7 @@ const UploadFile: React.FC<UploadFileProps> = ({ onFileCreated }) => {
           <div className="d-flex flex-wrap gap-2 align-items-center">
             <input
               type="text"
-              className="form-control me-2 border-white text-white"
+              className="form-control me-2 border-white text-black"
               style={{ width: "65%" }}
               placeholder="New file name"
               value={newFileName}

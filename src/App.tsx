@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.css";
-import "./App.css";
 import UploadFile from "./components/UploadFile.tsx";
 import FileTabs from "./components/FileTabs.tsx";
 import { socket } from "./components/Socket.ts";
