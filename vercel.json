@@ -1,0 +1,30 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
+
+## Deployment Steps
+
+### 1. Deploy Backend to Render:
+1. Go to [render.com](https://render.com) and sign up
+2. Click "New +" → "Web Service"
+3. Connect your GitHub repository
+4. Settings:
+   - **Name**: pr2-socket-server
+   - **Build Command**: `npm install && npm run build:server`
+   - **Start Command**: `npm run start:server`
+   - **Environment**: Node
+5. Deploy and copy your service URL (e.g., `https://pr2-socket-server.onrender.com`)
+
+### 2. Deploy Frontend to Vercel:
+1. Go to [vercel.com](https://vercel.com) and import your repository
+2. In "Environment Variables", add:
+```
+   VITE_SOCKET_URL=https://pr2-socket-server.onrender.com
