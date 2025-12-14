@@ -12,7 +12,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
 
-    "build:server": "tsc ./Server.ts --outDir dist --module NodeNext --moduleResolution NodeNext --target ES2022 --esModuleInterop",
+    "build:server": "tsc src/Server.ts --outDir dist --module NodeNext --moduleResolution NodeNext --target ES2022 --esModuleInterop",
     "start:server": "node dist/Server.js",
     "dev:server": "ts-node Server.ts"
   },
